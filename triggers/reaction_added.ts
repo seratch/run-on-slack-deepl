@@ -1,7 +1,7 @@
 import { Trigger } from "deno-slack-api/types.ts";
 import workflowDef from "../workflows/reacjilator.ts";
 
-const reactionAddedTrigger: Trigger<typeof workflowDef.definition> = {
+const trigger: Trigger<typeof workflowDef.definition> = {
   type: "event",
   name: "Reaction added event trigger",
   description: "A trigger to start a new workflow",
@@ -9,7 +9,7 @@ const reactionAddedTrigger: Trigger<typeof workflowDef.definition> = {
   event: {
     event_type: "slack#/events/reaction_added",
     // TODO: Listing all the channels to enable here is required
-    channel_ids: ["CLT1F93TP"],
+    channel_ids: ["C013T0FTKU3"],
   },
   inputs: {
     channelId: {
@@ -24,4 +24,4 @@ const reactionAddedTrigger: Trigger<typeof workflowDef.definition> = {
   },
 };
 
-export default reactionAddedTrigger;
+export default trigger;

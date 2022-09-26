@@ -27,7 +27,7 @@ export const langToReaction: Record<string, string> = {
   uk: ":flag-ua:",
 };
 
-export const langToName: any = {
+export const langToName: Record<string, string> = {
   en: "English",
   ja: "Japanese",
   zh: "Chinese",

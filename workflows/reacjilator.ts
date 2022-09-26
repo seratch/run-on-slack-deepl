@@ -24,9 +24,9 @@ const workflow = DefineWorkflow({
 
 // Enable steps
 const langSelector = workflow.addStep(langSelectorDef, workflow.inputs);
-const _translator = workflow.addStep(translatorDef, {
-  channelId: workflow.inputs.channelId,
-  messageTs: workflow.inputs.messageTs,
+
+workflow.addStep(translatorDef, {
+  ...workflow.inputs,
   lang: langSelector.outputs.lang,
 });
 

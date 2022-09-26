@@ -32,7 +32,7 @@ export const def = DefineFunction({
   },
 });
 
-const func: SlackFunctionHandler<typeof def.definition> = async ({
+const handler: SlackFunctionHandler<typeof def.definition> = async ({
   inputs,
   token,
   env,
@@ -52,6 +52,7 @@ const func: SlackFunctionHandler<typeof def.definition> = async ({
     inclusive: true,
   });
   if (translationTarget.error) {
+    // If you see this log message, you need to invite this app to the channel
     console.log(
       `Failed to fetch the message due to ${translationTarget.error}`
     );
@@ -100,7 +101,7 @@ const func: SlackFunctionHandler<typeof def.definition> = async ({
   );
   return await { outputs: { ts: result.ts } };
 };
-export default func;
+export default handler;
 
 // internal functions
 
