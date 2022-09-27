@@ -4,7 +4,6 @@ import { SlackAPI } from "deno-slack-api/mod.ts";
 import { SlackAPIClient } from "deno-slack-api/types.ts";
 import { getLogger } from "../utils/logger.ts";
 import { resolveFunctionSourceFile } from "../utils/source_file_resoluion.ts";
-import * as log from "https://deno.land/std@0.157.0/log/mod.ts";
 
 export const def = DefineFunction({
   callback_id: "translator",
@@ -82,7 +81,11 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
   });
   const translationResult = await deeplResponse.json();
   if (!translationResult || translationResult.translations.length === 0) {
-    logger.info(`Translation failed for some reason: ${translationResult}`);
+    logger.info(
+      `Translation failed for some reason: ${
+        JSON.stringify(translationResult)
+      }`,
+    );
     return emptyOutputs;
   }
   const translatedText = translationResult.translations[0].text;
@@ -90,10 +93,12 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
     channel: inputs.channelId,
     ts: inputs.messageTs,
   });
-  if (isAlreadyPosted(logger, replies.messages, translatedText)) {
+  if (isAlreadyPosted(replies.messages, translatedText)) {
     // Skip posting the same one
     logger.info(
-      `Skipped this translation as it's already posted: ${translatedText}`,
+      `Skipped this translation as it's already posted: ${
+        JSON.stringify(translatedText)
+      }`,
     );
     return emptyOutputs;
   }
@@ -110,12 +115,10 @@ export default handler;
 // internal functions
 
 function isAlreadyPosted(
-  logger: log.Logger,
   // deno-lint-ignore no-explicit-any
   replies: Record<string, any>[],
   translatedText: string,
 ): boolean {
-  logger.debug(replies);
   if (!replies) {
     return false;
   }
