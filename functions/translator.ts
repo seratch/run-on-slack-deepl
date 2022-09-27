@@ -2,12 +2,15 @@ import { DefineFunction, Schema } from "deno-slack-sdk/mod.ts";
 import { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 import { SlackAPIClient } from "deno-slack-api/types.ts";
+import { getLogger } from "../utils/logger.ts";
+import { resolveFunctionSourceFile } from "../utils/source_file_resoluion.ts";
+import * as log from "https://deno.land/std@0.157.0/log/mod.ts";
 
 export const def = DefineFunction({
   callback_id: "translator",
   title: "Translator",
   description: "A funtion to translate a Slack message",
-  source_file: "functions/translator.ts",
+  source_file: resolveFunctionSourceFile(import.meta.url),
   input_parameters: {
     properties: {
       channelId: {
@@ -37,11 +40,12 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
   token,
   env,
 }) => {
-  console.log(`translator function called: ${JSON.stringify(inputs)}`);
+  const logger = await getLogger(env.logLevel);
+  logger.debug(`translator inputs: ${JSON.stringify(inputs)}`);
   const emptyOutputs = { outputs: {} };
   if (inputs.lang === undefined) {
     // no language specified by the reaction
-    console.log(`Skipped as no lang detected`);
+    logger.info(`Skipped as no lang detected`);
     return emptyOutputs;
   }
   const client: SlackAPIClient = SlackAPI(token);
@@ -53,13 +57,13 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
   });
   if (translationTarget.error) {
     // If you see this log message, you need to invite this app to the channel
-    console.log(
-      `Failed to fetch the message due to ${translationTarget.error}`
+    logger.info(
+      `Failed to fetch the message due to ${translationTarget.error}`,
     );
     return emptyOutputs;
   }
   if (translationTarget.messages.length == 0) {
-    console.log(`No message found`);
+    logger.info("No message found");
     return emptyOutputs;
   }
   const authKey = env.DEEPL_AUTH_KEY;
@@ -78,7 +82,7 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
   });
   const translationResult = await deeplResponse.json();
   if (!translationResult || translationResult.translations.length === 0) {
-    console.log(`Translation failed for some reason: ${translationResult}`);
+    logger.info(`Translation failed for some reason: ${translationResult}`);
     return emptyOutputs;
   }
   const translatedText = translationResult.translations[0].text;
@@ -86,10 +90,10 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
     channel: inputs.channelId,
     ts: inputs.messageTs,
   });
-  if (isAlreadyPosted(replies.messages, translatedText)) {
+  if (isAlreadyPosted(logger, replies.messages, translatedText)) {
     // Skip posting the same one
-    console.log(
-      `Skipped this translation as it's already posted: ${translatedText}`
+    logger.info(
+      `Skipped this translation as it's already posted: ${translatedText}`,
     );
     return emptyOutputs;
   }
@@ -97,7 +101,7 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
     client,
     inputs.channelId,
     inputs.messageTs,
-    translatedText
+    translatedText,
   );
   return await { outputs: { ts: result.ts } };
 };
@@ -106,11 +110,12 @@ export default handler;
 // internal functions
 
 function isAlreadyPosted(
+  logger: log.Logger,
   // deno-lint-ignore no-explicit-any
   replies: Record<string, any>[],
-  translatedText: string
+  translatedText: string,
 ): boolean {
-  console.log(replies);
+  logger.debug(replies);
   if (!replies) {
     return false;
   }
@@ -126,7 +131,7 @@ async function sayInThread(
   client: SlackAPIClient,
   channelId: string,
   threadTs: string,
-  text: string
+  text: string,
 ) {
   return await client.chat.postMessage({
     channel: channelId,

@@ -9,7 +9,7 @@ const trigger: Trigger<typeof workflowDef.definition> = {
   event: {
     event_type: "slack#/events/reaction_added",
     // TODO: Listing all the channels to enable here is required
-    channel_ids: ["C013T0FTKU3"],
+    channel_ids: ["CLT1F93TP"],
   },
   inputs: {
     channelId: {
