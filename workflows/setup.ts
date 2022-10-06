@@ -7,7 +7,7 @@ import { default as reacjilatorDef } from "./reacjilator.ts";
  */
 const workflow = DefineWorkflow({
   callback_id: "reacjilator-setup",
-  title: "Configure DeepL translator app in channels",
+  title: "Configure DeepL translator app in channels (beta)",
   input_parameters: {
     properties: {
       interactivity: { type: Schema.slack.types.interactivity },

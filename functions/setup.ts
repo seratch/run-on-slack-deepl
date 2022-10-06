@@ -3,9 +3,6 @@ import { SlackAPI } from "deno-slack-api/mod.ts";
 import { Logger } from "../utils/logger.ts";
 import { FunctionSourceFile } from "../utils/function_source_file.ts";
 
-/**
- * See https://api.slack.com/future/functions/custom
- */
 export const def = DefineFunction({
   callback_id: "manage-reaction-added-event-trigger",
   title: "Manage a reaction_added event trigger",
@@ -28,12 +25,11 @@ export default SlackFunction(def, async ({
   env,
   token,
 }) => {
-  const logger = Logger(env.logLevel);
-  logger.debug(inputs);
+  const logger = Logger(env.LOG_LEVEL);
 
   const client = SlackAPI(token);
+  // Check the existing triggers for this workflow
   const allTriggers = await client.workflows.triggers.list({});
-  logger.info(allTriggers);
   let triggerToUpdate = undefined;
   // find the trigger to update
   if (allTriggers.triggers) {
@@ -46,9 +42,13 @@ export default SlackFunction(def, async ({
       }
     }
   }
+  logger.info(`triggerToUpdate: ${JSON.stringify(triggerToUpdate)}`);
+
   const channelIds = triggerToUpdate?.channel_ids != undefined
     ? triggerToUpdate.channel_ids
     : [];
+
+  // Open the modal to configure the channel list to enable this workflow
   await client.views.open({
     interactivity_pointer: inputs.interactivity.interactivity_pointer,
     view: {
@@ -91,19 +91,13 @@ export default SlackFunction(def, async ({
   .addViewSubmissionHandler(
     ["configure-workflow"],
     async ({ view, inputs, env, token }) => {
-      const logger = Logger(env.logLevel);
+      const logger = Logger(env.LOG_LEVEL);
       const { workflowCallbackId } = inputs;
       const channelIds = view.state.values.block.channels.selected_channels;
       const triggerInputs = {
-        channelId: {
-          value: "{{data.channel_id}}",
-        },
-        messageTs: {
-          value: "{{data.message_ts}}",
-        },
-        reaction: {
-          value: "{{data.reaction}}",
-        },
+        channelId: { value: "{{data.channel_id}}" },
+        messageTs: { value: "{{data.message_ts}}" },
+        reaction: { value: "{{data.reaction}}" },
       };
 
       const client = SlackAPI(token);
@@ -125,6 +119,7 @@ export default SlackFunction(def, async ({
         }
 
         if (triggerToUpdate === undefined) {
+          // Create a new trigger
           const creation = await client.workflows.triggers.create({
             type: "event",
             name: "reaction_added event trigger",
@@ -137,6 +132,7 @@ export default SlackFunction(def, async ({
           });
           logger.info(`A new trigger created: ${JSON.stringify(creation)}`);
         } else {
+          // Update the existing trigger
           const update = await client.workflows.triggers.update({
             trigger_id: triggerToUpdate.id,
             type: "event",
@@ -150,6 +146,9 @@ export default SlackFunction(def, async ({
           });
           logger.info(`A new trigger updated: ${JSON.stringify(update)}`);
         }
+
+        // This app's bot user joins all the channels
+        // to perform API calls for the channels
         for (const channelId of channelIds) {
           const joinResult = await client.conversations.join({
             channel: channelId,
@@ -191,8 +190,8 @@ export default SlackFunction(def, async ({
   .addViewClosedHandler(
     ["configure-workflow"],
     ({ view, env }) => {
-      const logger = Logger(env.logLevel);
-      logger.debug(JSON.stringify(view, null, 2));
+      const logger = Logger(env.LOG_LEVEL);
+      logger.debug(JSON.stringify(view));
       return {
         outputs: {},
         completed: true,

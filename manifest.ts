@@ -3,7 +3,7 @@ import reacjilator from "./workflows/reacjilator.ts";
 import setup from "./workflows/setup.ts";
 
 export default Manifest({
-  name: "DeepL for Slack",
+  name: "DeepL for Slack (beta)",
   description: "A beta app that enbales using DeepL for Slack messages",
   icon: "assets/icon.png",
   workflows: [

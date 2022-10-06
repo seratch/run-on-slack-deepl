@@ -4,7 +4,7 @@ import { def as translatorDef } from "../functions/translator.ts";
 
 const workflow = DefineWorkflow({
   callback_id: "reacjilator",
-  title: "DeepL translation",
+  title: "DeepL translation (beta)",
   description: "Translate a message when a flag reaction is added",
   input_parameters: {
     properties: {
