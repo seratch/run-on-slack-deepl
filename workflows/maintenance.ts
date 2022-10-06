@@ -1,5 +1,5 @@
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
-import { def as maintainDef } from "../functions/maintain.ts";
+import { def as maintenanceDef } from "../functions/maintenance.ts";
 import { default as reacjilatorDef } from "./reacjilator.ts";
 
 /**
@@ -14,7 +14,7 @@ const workflow = DefineWorkflow({
   },
 });
 
-workflow.addStep(maintainDef, {
+workflow.addStep(maintenanceDef, {
   workflowCallbackId: reacjilatorDef.definition.callback_id,
 });
 
