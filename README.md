@@ -29,7 +29,9 @@ slack deploy
 slack trigger create --trigger-def triggers/setup.ts
 ```
 
-You will get a URL (e.g., `https://slack.com/shortcuts/Ft***/****`) to invoke the setup workflow. Once you can share the URL in your Slack workspace, any users in the workspace can enable the translator app in any public channels.
+You will get a URL (e.g., `https://slack.com/shortcuts/Ft***/****`) to invoke
+the setup workflow. Once you can share the URL in your Slack workspace, any
+users in the workspace can enable the translator app in any public channels.
 
 ### 2. Set DeepL API key to the app
 

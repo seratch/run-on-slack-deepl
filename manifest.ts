@@ -1,6 +1,7 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import reacjilator from "./workflows/reacjilator.ts";
 import setup from "./workflows/setup.ts";
+import maintenance from "./workflows/maintenance.ts";
 
 export default Manifest({
   name: "DeepL for Slack (beta)",
@@ -9,6 +10,7 @@ export default Manifest({
   workflows: [
     reacjilator,
     setup,
+    maintenance,
   ],
   outgoingDomains: [
     "api-free.deepl.com",
