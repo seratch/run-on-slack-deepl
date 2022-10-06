@@ -2,14 +2,14 @@ import { DefineFunction, Schema } from "deno-slack-sdk/mod.ts";
 import { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 import { SlackAPIClient } from "deno-slack-api/types.ts";
-import { getLogger } from "../utils/logger.ts";
-import { resolveFunctionSourceFile } from "../utils/source_file_resoluion.ts";
+import { Logger } from "../utils/logger.ts";
+import { FunctionSourceFile } from "../utils/function_source_file.ts";
 
 export const def = DefineFunction({
   callback_id: "translator",
   title: "Translator",
   description: "A funtion to translate a Slack message",
-  source_file: resolveFunctionSourceFile(import.meta.url),
+  source_file: FunctionSourceFile(import.meta.url),
   input_parameters: {
     properties: {
       channelId: {
@@ -39,7 +39,7 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
   token,
   env,
 }) => {
-  const logger = await getLogger(env.logLevel);
+  const logger = Logger(env.LOG_LEVEL);
   logger.debug(`translator inputs: ${JSON.stringify(inputs)}`);
   const emptyOutputs = { outputs: {} };
   if (inputs.lang === undefined) {

@@ -12,15 +12,9 @@ const trigger: Trigger<typeof workflowDef.definition> = {
     channel_ids: ["CLT1F93TP"],
   },
   inputs: {
-    channelId: {
-      value: "{{data.channel_id}}",
-    },
-    messageTs: {
-      value: "{{data.message_ts}}",
-    },
-    reaction: {
-      value: "{{data.reaction}}",
-    },
+    channelId: { value: "{{data.channel_id}}" },
+    messageTs: { value: "{{data.message_ts}}" },
+    reaction: { value: "{{data.reaction}}" },
   },
 };
 

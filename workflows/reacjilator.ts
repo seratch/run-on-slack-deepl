@@ -8,15 +8,9 @@ const workflow = DefineWorkflow({
   description: "Translate a message when a flag reaction is added",
   input_parameters: {
     properties: {
-      channelId: {
-        type: Schema.slack.types.channel_id,
-      },
-      messageTs: {
-        type: Schema.types.string,
-      },
-      reaction: {
-        type: Schema.types.string,
-      },
+      channelId: { type: Schema.slack.types.channel_id },
+      messageTs: { type: Schema.types.string },
+      reaction: { type: Schema.types.string },
     },
     required: ["channelId", "messageTs", "reaction"],
   },

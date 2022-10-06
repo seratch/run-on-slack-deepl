@@ -20,16 +20,16 @@ slack create my-deepl-slack-app -t seratch/run-on-slack-deepl
 cd my-deepl-slack-app/
 ```
 
-### 1. Enable reaction_added trigger
+### 1. Enable Setup Workflow
 
-First off, open `triggers/reaction_added.ts` source file and modify it to have a
-valid list of channel IDs to enable this app. And then, run the following CLI
-command:
+First off, let's enable the "setup" workflow!
 
 ```bash
 slack deploy
-slack trigger create --trigger-def triggers/reaction_added.ts
+slack trigger create --trigger-def triggers/setup.ts
 ```
+
+You will get a URL (e.g., `https://slack.com/shortcuts/Ft***/****`) to invoke the setup workflow. Once you can share the URL in your Slack workspace, any users in the workspace can enable the translator app in any public channels.
 
 ### 2. Set DeepL API key to the app
 
