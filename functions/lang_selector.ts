@@ -1,5 +1,4 @@
-import { DefineFunction, Schema } from "deno-slack-sdk/mod.ts";
-import { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
+import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { reactionToLang } from "./languages.ts";
 import { Logger } from "../utils/logger.ts";
 import { FunctionSourceFile } from "../utils/function_source_file.ts";
@@ -27,7 +26,7 @@ export const def = DefineFunction({
   },
 });
 
-const handler: SlackFunctionHandler<typeof def.definition> = async ({
+export default SlackFunction(def, ({
   inputs,
   env,
 }) => {
@@ -46,7 +45,5 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
     // jp, fr, etc.
     lang = reactionToLang[reactionName];
   }
-  return await { outputs: { lang } };
-};
-
-export default handler;
+  return { outputs: { lang } };
+});

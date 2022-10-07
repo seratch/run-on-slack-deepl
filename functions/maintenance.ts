@@ -2,6 +2,7 @@ import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 import { Logger } from "../utils/logger.ts";
 import { FunctionSourceFile } from "../utils/function_source_file.ts";
+import { findTriggerToUpdate, joinAllChannels } from "./internals.ts";
 
 export const def = DefineFunction({
   callback_id: "maintain-channel-memberships",
@@ -26,20 +27,11 @@ export default SlackFunction(def, async ({
 }) => {
   const logger = Logger(env.LOG_LEVEL);
   const client = SlackAPI(token);
-  // Check the existing triggers for this workflow
-  const allTriggers = await client.workflows.triggers.list({});
-  let targetTrigger = undefined;
-  // find the trigger to maintain
-  if (allTriggers.triggers) {
-    for (const trigger of allTriggers.triggers) {
-      if (
-        trigger.workflow.callback_id === inputs.workflowCallbackId &&
-        trigger.event_type === "slack#/events/reaction_added"
-      ) {
-        targetTrigger = trigger;
-      }
-    }
-  }
+  const targetTrigger = await findTriggerToUpdate(
+    client,
+    logger,
+    inputs.workflowCallbackId,
+  );
   if (
     targetTrigger === undefined ||
     targetTrigger.channel_ids === undefined
@@ -48,11 +40,14 @@ export default SlackFunction(def, async ({
   }
   // This app's bot user joins all the channels
   // to perform API calls for the channels
-  for (const channelId of targetTrigger.channel_ids) {
-    const joinResult = await client.conversations.join({
-      channel: channelId,
-    });
-    logger.debug(joinResult);
+  const error = await joinAllChannels(
+    client,
+    logger,
+    targetTrigger.channel_ids,
+  );
+  if (error) {
+    return { error };
+  } else {
+    return { outputs: {} };
   }
-  return { outputs: {} };
 });

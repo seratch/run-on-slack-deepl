@@ -1,5 +1,4 @@
-import { DefineFunction, Schema } from "deno-slack-sdk/mod.ts";
-import { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
+import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 import { SlackAPIClient } from "deno-slack-api/types.ts";
 import { Logger } from "../utils/logger.ts";
@@ -34,7 +33,7 @@ export const def = DefineFunction({
   },
 });
 
-const handler: SlackFunctionHandler<typeof def.definition> = async ({
+export default SlackFunction(def, async ({
   inputs,
   token,
   env,
@@ -109,10 +108,11 @@ const handler: SlackFunctionHandler<typeof def.definition> = async ({
     translatedText,
   );
   return await { outputs: { ts: result.ts } };
-};
-export default handler;
+});
 
-// internal functions
+// ---------------------------
+// Internal functions
+// ---------------------------
 
 function isAlreadyPosted(
   // deno-lint-ignore no-explicit-any
