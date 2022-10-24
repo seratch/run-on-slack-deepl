@@ -1,5 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { reactionToLang } from "./languages.ts";
+import { reactionToLang } from "./internals/languages.ts";
 import { Logger } from "../utils/logger.ts";
 import { FunctionSourceFile } from "../utils/function_source_file.ts";
 
@@ -10,17 +10,13 @@ export const def = DefineFunction({
   source_file: FunctionSourceFile(import.meta.url),
   input_parameters: {
     properties: {
-      reaction: {
-        type: Schema.types.string,
-      },
+      reaction: { type: Schema.types.string },
     },
     required: ["reaction"],
   },
   output_parameters: {
     properties: {
-      lang: {
-        type: Schema.types.string,
-      },
+      lang: { type: Schema.types.string },
     },
     required: [],
   },

@@ -2,7 +2,10 @@ import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 import { Logger } from "../utils/logger.ts";
 import { FunctionSourceFile } from "../utils/function_source_file.ts";
-import { findTriggerToUpdate, joinAllChannels } from "./internals.ts";
+import {
+  findTriggerToUpdate,
+  joinAllChannels,
+} from "./internals/trigger_management.ts";
 
 export const def = DefineFunction({
   callback_id: "maintain-channel-memberships",

@@ -11,23 +11,15 @@ export const def = DefineFunction({
   source_file: FunctionSourceFile(import.meta.url),
   input_parameters: {
     properties: {
-      channelId: {
-        type: Schema.types.string,
-      },
-      messageTs: {
-        type: Schema.types.string,
-      },
-      lang: {
-        type: Schema.types.string,
-      },
+      channelId: { type: Schema.types.string },
+      messageTs: { type: Schema.types.string },
+      lang: { type: Schema.types.string },
     },
     required: ["channelId", "messageTs"],
   },
   output_parameters: {
     properties: {
-      ts: {
-        type: Schema.types.string,
-      },
+      ts: { type: Schema.types.string },
     },
     required: [],
   },

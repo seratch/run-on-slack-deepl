@@ -18,7 +18,7 @@ const workflow = DefineWorkflow({
 
 workflow.addStep(setupDef, {
   interactivity: workflow.inputs.interactivity,
-  workflowCallbackId: reacjilatorDef.definition.callback_id,
+  reacjilatorWorkflowCallbackId: reacjilatorDef.definition.callback_id,
 });
 
 export default workflow;

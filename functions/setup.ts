@@ -6,7 +6,7 @@ import {
   createOrUpdateTrigger,
   findTriggerToUpdate,
   joinAllChannels,
-} from "./internals.ts";
+} from "./internals/trigger_management.ts";
 
 export const def = DefineFunction({
   callback_id: "manage-reaction-added-event-trigger",
@@ -15,9 +15,9 @@ export const def = DefineFunction({
   input_parameters: {
     properties: {
       interactivity: { type: Schema.slack.types.interactivity },
-      workflowCallbackId: { type: Schema.types.string },
+      reacjilatorWorkflowCallbackId: { type: Schema.types.string },
     },
-    required: ["interactivity", "workflowCallbackId"],
+    required: ["interactivity", "reacjilatorWorkflowCallbackId"],
   },
   output_parameters: {
     properties: {},
@@ -38,7 +38,7 @@ export default SlackFunction(def, async ({
   const triggerToUpdate = await findTriggerToUpdate(
     client,
     logger,
-    inputs.workflowCallbackId,
+    inputs.reacjilatorWorkflowCallbackId,
   );
   logger.info(`triggerToUpdate: ${JSON.stringify(triggerToUpdate)}`);
 
@@ -62,7 +62,7 @@ export default SlackFunction(def, async ({
     ["configure-workflow"],
     async ({ view, inputs, env, token }) => {
       const logger = Logger(env.LOG_LEVEL);
-      const { workflowCallbackId } = inputs;
+      const { reacjilatorWorkflowCallbackId } = inputs;
       const channelIds = view.state.values.block.channels.selected_channels;
 
       const client = SlackAPI(token);
@@ -71,14 +71,14 @@ export default SlackFunction(def, async ({
         const triggerToUpdate = await findTriggerToUpdate(
           client,
           logger,
-          inputs.workflowCallbackId,
+          inputs.reacjilatorWorkflowCallbackId,
         );
         // If the trigger already exists, we update it.
         // Otherwise, we create a new one.
         await createOrUpdateTrigger(
           client,
           logger,
-          workflowCallbackId,
+          reacjilatorWorkflowCallbackId,
           channelIds,
           triggerToUpdate,
         );
