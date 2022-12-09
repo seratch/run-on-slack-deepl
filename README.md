@@ -4,6 +4,10 @@ This sample app is a translator app that runs
 [DeepL's awesome APIs](https://www.deepl.com/en/docs-api) for translating Slack
 message text into a different language.
 
+## Important Notice
+
+This app has been transferred to the official Slack sample app repo: https://github.com/slack-samples/deno-deepl-translator :tada: Please use the app instead!
+
 ## Steps to enable this app
 
 ### 0. Enable the next-gen platform in your workspace
